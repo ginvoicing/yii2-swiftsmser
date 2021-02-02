@@ -3,7 +3,7 @@
     "description": "The SMS gateway integration for different SMS clients for the Yii framework",
     "keywords": ["yii2", "swiftsmser", "sms", "gateway"],
     "type": "yii-extension",
-    "license": "BSD-3-Clause",
+    "license": "MIT",
     "minimum-stability": "stable",
     "support": {
         "issues": "https://github.com/tarunjangra/yii-swiftsmser/issues",
