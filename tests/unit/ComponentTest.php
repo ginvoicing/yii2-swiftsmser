@@ -75,7 +75,7 @@ class ComponentTest extends Codeception\Test\Unit
              * This property is not defined in params of the component settings.
              */
             \Yii::$app->swiftsmser->transactional->base;
-        }catch (\yii\swiftsmser\exceptions\InvalidPropertyException $e) {
+        }catch (\yii\base\UnknownPropertyException $e) {
             $this->assertEquals(210419831, $e->getCode());
             $caught = true;
         }
