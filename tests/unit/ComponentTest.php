@@ -20,7 +20,7 @@ class ComponentTest extends Codeception\Test\Unit
             ]);
             Yii::$app->swiftsmser->promotional;
         } catch (\yii\swiftsmser\exceptions\BadGatewayException $e) {
-            $this->assertEquals("No promotional SMS gateway found.", $e->getMessage());
+            $this->assertEquals(210419832, $e->getCode());
             $caught = true;
         }
 
@@ -38,10 +38,47 @@ class ComponentTest extends Codeception\Test\Unit
             ]);
             Yii::$app->swiftsmser->transactional;
         } catch (\yii\swiftsmser\exceptions\BadGatewayException $e) {
-            $this->assertEquals("No transactional SMS gateway found.", $e->getMessage());
+            $this->assertEquals(210419833, $e->getCode());
             $caught = true;
         }
 
+        $this->assertTrue($caught, 'Caught not supported exception');
+    }
+
+
+    public function testInvalidPropertyException()
+    {
+        Yii::$app->set('swiftsmser', [
+            'class' => '\yii\swiftsmser\Gateway',
+            'gateways' => [
+                [
+                    'transporter' => 'Biz2',
+                    'type' => 'promotional',
+                    'params' => [
+                        'apiBase' => 'http://biz2.smslounge.in/api/v2/',
+                        'apiKey' => '374937843',
+                    ]
+                ],
+                [
+                    'transporter' => 'ICloudMessage',
+                    'type' => 'transactional',
+                    'params' => [
+                        'apiBase' => 'http://msg.icloudsms.com/rest/services/sendSMS/',
+                        'apiKey' => '374937843',
+                    ]
+                ]
+            ]
+        ]);
+        $caught = false;
+        try {
+            /*
+             * This property is not defined in params of the component settings.
+             */
+            \Yii::$app->swiftsmser->transactional->base;
+        }catch (\yii\swiftsmser\exceptions\InvalidPropertyException $e) {
+            $this->assertEquals(210419831, $e->getCode());
+            $caught = true;
+        }
         $this->assertTrue($caught, 'Caught not supported exception');
     }
 

@@ -8,6 +8,8 @@
 
 namespace yii\swiftsmser\transporters;
 
+use yii\swiftsmser\exceptions\InvalidPropertyException;
+
 abstract class Base
 {
     protected $_attributes;
@@ -18,6 +20,9 @@ abstract class Base
 
     public function __get($name)
     {
+        if (!isset($this->_attributes[$name])) {
+            throw new InvalidPropertyException("\"{$name}\" is an invalid property.", 210419831);
+        }
         return $this->_attributes[$name];
     }
 }

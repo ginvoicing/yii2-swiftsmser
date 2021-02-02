@@ -18,16 +18,16 @@ interface TransporterInterface
     /**
      * Get user balance
      * @throws BalanceException
-     * @return float|bool
+     * @return float
      */
-    public function getBalance();
+    public function getBalance(): float;
 
     /**
      * @param array $params
      * @throws SendException
      * @return string
      */
-    public function sendMessage(array $params);
+    public function sendMessage(array $params):string;
 
     /**
      * @param string $id
@@ -35,5 +35,5 @@ interface TransporterInterface
      * @param int $all
      * @return array
      */
-    public function getMessageStatus($id, $phone, $all = 2);
+    public function getMessageStatus($id, $phone, $all = 2):array;
 }

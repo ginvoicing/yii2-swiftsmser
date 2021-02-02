@@ -11,18 +11,18 @@ use yii\swiftsmser\TransporterInterface;
 
 class ICloudMessage extends Base implements TransporterInterface
 {
-    public function getBalance()
+    public function getBalance():float
     {
         // TODO: Implement getBalance() method.
     }
 
-    public function getMessageStatus($id, $phone, $all = 2)
-    {
-        // TODO: Implement getMessageStatus() method.
-    }
-
-    public function sendMessage(array $params)
+    public function sendMessage(array $params):string
     {
         // TODO: Implement sendMessage() method.
+    }
+
+    public function getMessageStatus($id, $phone, $all = 2):array
+    {
+        // TODO: Implement getMessageStatus() method.
     }
 }

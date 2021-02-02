@@ -39,7 +39,7 @@ class Gateway extends Component
                 return new $transporter($selected_gateway['params']);
             }
         }
-        throw new BadGatewayException('No promotional SMS gateway is avaialble.');
+        throw new BadGatewayException('No promotional SMS gateway is available.', 210419832);
     }
 
     public function getTransactional()
@@ -59,6 +59,6 @@ class Gateway extends Component
                 return new $transporter($selected_gateway['params']);
             }
         }
-        throw new BadGatewayException('No transactional SMS gateway is available.');
+        throw new BadGatewayException('No transactional SMS gateway is available.', 210419833);
     }
 }
