@@ -14,51 +14,39 @@ use yii\swiftsmser\exceptions\BadGatewayException;
 
 class Gateway extends Component
 {
-    public $gateways;
+    /** @var array */
+    public $transporters;
 
     public function __construct($config = [])
     {
-        $this->gateways=$config['gateways'];
+        $this->transporters=$config['transporters'];
         parent::__construct($config);
     }
 
-    public function getPromotional()
+    public function getPromotional(): TransporterInterface
     {
-        $promotional_gateways = [];
-        foreach ($this->gateways as $gateway) {
-            if ($gateway['type'] === 'promotional') {
-                $promotional_gateways[]=$gateway;
-            }
-        }
-        if (count($promotional_gateways)) {
-            $selected_gateway = $promotional_gateways[array_rand($promotional_gateways)];
-            if (isset($selected_gateway['transporter'])) {
-                /** @var  $transporter */
-                $transporter = "\\yii\\swiftsmser\\transporters\\{$selected_gateway['transporter']}";
-
-                return new $transporter($selected_gateway['params']);
-            }
-        }
-        throw new BadGatewayException('No promotional SMS gateway is available.', 210419832);
+        return $this->getGateway('promotional');
     }
 
-    public function getTransactional()
+    public function getTransactional(): TransporterInterface
     {
-        $transactional_gateway = [];
-        foreach ($this->gateways as $gateway) {
-            if ($gateway['type'] === 'transactional') {
-                $transactional_gateway[]=$gateway;
-            }
-        }
-        if (count($transactional_gateway)) {
-            $selected_gateway = $transactional_gateway[array_rand($transactional_gateway)];
-            if (isset($selected_gateway['transporter'])) {
-                /** @var  $transporter */
-                $transporter = "\\yii\\swiftsmser\\transporters\\{$selected_gateway['transporter']}";
+        return $this->getGateway('transactional');
+    }
 
-                return new $transporter($selected_gateway['params']);
+    private function getGateway(string $type): TransporterInterface
+    {
+        $gateways = [];
+        foreach ($this->transporters as $transporter) {
+            if ($transporter['type'] === $type) {
+                $gateways[]=$transporter;
             }
         }
-        throw new BadGatewayException('No transactional SMS gateway is available.', 210419833);
+        if (count($gateways)) {
+            $selected_transporter = $gateways[array_rand($gateways)];
+            if (isset($selected_transporter['class'])) {
+                return new $selected_transporter['class']();
+            }
+        }
+        throw new BadGatewayException("No {$type} sms transporter is available.", 210419832);
     }
 }

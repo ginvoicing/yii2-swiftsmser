@@ -13,8 +13,6 @@ use yii\swiftsmser\exceptions\SendException;
 
 interface TransporterInterface
 {
-    public function __construct(array $params);
-
     /**
      * Get user balance
      * @throws BalanceException

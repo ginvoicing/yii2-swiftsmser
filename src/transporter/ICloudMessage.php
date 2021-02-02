@@ -5,12 +5,18 @@
  * Date: 01/02/2021
  * Time: 06:38
  */
-namespace yii\swiftsmser\transporters;
+namespace yii\swiftsmser\transporter;
 
 use yii\swiftsmser\TransporterInterface;
 
-class Biz2 extends Base implements TransporterInterface
+class ICloudMessage extends Base implements TransporterInterface
 {
+    /** @var string */
+    private $_apiBase = 'http://msg.icloudsms.com/rest/services/sendSMS/';
+    /** @var string */
+    private $_apiKey = '374937843';
+
+
     public function getBalance():float
     {
         // TODO: Implement getBalance() method.
