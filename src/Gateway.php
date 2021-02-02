@@ -44,7 +44,7 @@ class Gateway extends Component
         if (count($gateways)) {
             $selected_transporter = $gateways[array_rand($gateways)];
             if (isset($selected_transporter['class'])) {
-                return new $selected_transporter['class']();
+                return new $selected_transporter['class']($selected_transporter['params']);
             }
         }
         throw new BadGatewayException("No {$type} sms transporter is available.", 210419832);

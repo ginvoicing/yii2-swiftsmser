@@ -31,7 +31,8 @@
         "codeception/module-yii2": "^1.0.0",
         "codeception/module-asserts": "^1.0.0",
         "phpro/grumphp": "^1.0.0",
-        "yiisoft/yii2-coding-standards": "~2.0.0"
+        "yiisoft/yii2-coding-standards": "~2.0.0",
+        "codeception/assert-throws": "^1.1"
     },
     "autoload": {
         "psr-4": { "yii\\swiftsmser\\": "src" }

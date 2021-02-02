@@ -8,39 +8,39 @@
 
 class ComponentTest extends Codeception\Test\Unit
 {
+    use \Codeception\AssertThrows;
 
     public function testSelectionOfPromotionalGatewayException()
     {
-        $caught = false;
-        try {
-            Yii::$app->set('swiftsmser', [
-                'class' => '\yii\swiftsmser\Gateway',
-                'transporters' => []
-            ]);
+        Yii::$app->set('swiftsmser', [
+            'class' => '\yii\swiftsmser\Gateway',
+            'transporters' => []
+        ]);
+        $this->assertThrows(\yii\swiftsmser\exceptions\BadGatewayException::class, function(){
             Yii::$app->swiftsmser->promotional;
-        } catch (\yii\swiftsmser\exceptions\BadGatewayException $e) {
-            $this->assertEquals(210419832, $e->getCode());
-            $caught = true;
-        }
-
-        $this->assertTrue($caught, 'Caught not supported exception');
+        });
     }
 
     public function testSelectionOfTransactionalGatewayException()
     {
-        $caught = false;
-        try {
-            Yii::$app->set('swiftsmser', [
-                'class' => '\yii\swiftsmser\Gateway',
-                'transporters' => []
-            ]);
+        Yii::$app->set('swiftsmser', [
+            'class' => '\yii\swiftsmser\Gateway',
+            'transporters' => []
+        ]);
+        $this->assertThrows(\yii\swiftsmser\exceptions\BadGatewayException::class, function(){
             Yii::$app->swiftsmser->transactional;
-        } catch (\yii\swiftsmser\exceptions\BadGatewayException $e) {
-            $this->assertEquals(210419832, $e->getCode());
-            $caught = true;
-        }
+        });
+    }
 
-        $this->assertTrue($caught, 'Caught not supported exception');
+    public function testUnknownPropertyException()
+    {
+        Yii::$app->set('swiftsmser', [
+            'class' => '\yii\swiftsmser\Gateway',
+            'transporters' => []
+        ]);
+        $this->assertThrows(\yii\base\UnknownPropertyException::class, function(){
+            Yii::$app->swiftsmser->unknown;
+        });
     }
 
     public function testGatewaySelection()
@@ -50,11 +50,19 @@ class ComponentTest extends Codeception\Test\Unit
             'transporters' => [
                 [
                     'class' => '\yii\swiftsmser\transporter\Biz2',
-                    'type' => 'promotional'
+                    'type' => 'promotional',
+                    'params' => [
+                        'baseApi' => 'http://biz2.smslounge.in/api/v2/',
+                        'apiKey' => '32423423'
+                    ]
                 ],
                 [
                     'class' => '\yii\swiftsmser\transporter\ICloudMessage',
-                    'type' => 'transactional'
+                    'type' => 'transactional',
+                    'params' => [
+                        'baseApi' => 'http://msg.icloudsms.com/rest/services/sendSMS/',
+                        'apiKey' => '234234234'
+                    ]
                 ]
             ]
         ]);
