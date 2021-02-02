@@ -12,6 +12,7 @@ use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\swiftsmser\exceptions\BadGatewayException;
 use yii\swiftsmser\exceptions\ClassNotFoundException;
+use yii\swiftsmser\exceptions\TransporterNotFoundException;
 
 class Gateway extends Component
 {
@@ -47,7 +48,7 @@ class Gateway extends Component
             if (isset($selected_transporter['class']) && class_exists($selected_transporter['class'])) {
                 return new $selected_transporter['class']($selected_transporter['params']);
             } else {
-                throw new ClassNotFoundException("Defined transporter \"{$selected_transporter['class']}\" not found.");
+                throw new TransporterNotFoundException("Defined transporter \"{$selected_transporter['class']}\" not found.");
             }
         }
         throw new BadGatewayException("No {$type} sms transporter is defined.", 210419832);

@@ -72,7 +72,7 @@ class ComponentTest extends Codeception\Test\Unit
                 ]
             ]
         ]);
-        $this->assertThrows(\yii\swiftsmser\exceptions\ClassNotFoundException::class, function(){
+        $this->assertThrows(\yii\swiftsmser\exceptions\TransporterNotFoundException::class, function(){
             Yii::$app->swiftsmser->promotional;
         });
     }
