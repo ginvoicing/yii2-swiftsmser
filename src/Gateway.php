@@ -11,6 +11,7 @@ namespace yii\swiftsmser;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\swiftsmser\exceptions\BadGatewayException;
+use yii\swiftsmser\exceptions\ClassNotFoundException;
 
 class Gateway extends Component
 {
@@ -37,14 +38,16 @@ class Gateway extends Component
     {
         $gateways = [];
         foreach ($this->transporters as $transporter) {
-            if ($transporter['type'] === $type) {
+            if (isset($transporter['type']) && $transporter['type'] === $type) {
                 $gateways[]=$transporter;
             }
         }
         if (count($gateways)) {
             $selected_transporter = $gateways[array_rand($gateways)];
-            if (isset($selected_transporter['class'])) {
+            if (isset($selected_transporter['class']) && class_exists($selected_transporter['class'])) {
                 return new $selected_transporter['class']($selected_transporter['params']);
+            } else {
+                throw new ClassNotFoundException("Defined transporter \"{$selected_transporter['class']}\" not found.");
             }
         }
         throw new BadGatewayException("No {$type} sms transporter is defined.", 210419832);
@@ -57,5 +60,13 @@ class Gateway extends Component
     public function setSenderId(string $sender_id)
     {
         $this->transporters['senderId'] = $sender_id;
+    }
+
+    private function validateConfigurations()
+    {
+        if (!isset($this->transporters['senderId'])) {
+        }
+        if (!isset($this->transporters['transporters'])) {
+        }
     }
 }

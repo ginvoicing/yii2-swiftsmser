@@ -58,6 +58,25 @@ class ComponentTest extends Codeception\Test\Unit
         });
     }
 
+    public function testNotfoundTransporterException(){
+        Yii::$app->set('swiftsmser', [
+            'class' => '\yii\swiftsmser\Gateway',
+            'senderId' => 'GINVCN',
+            'transporters' => [
+                [
+                    'class' => '\yii\swiftsmser\transporter\Unknown',
+                    'type' => 'promotional',
+                    'params' => [
+                        'apiKey' => '32423423'
+                    ]
+                ]
+            ]
+        ]);
+        $this->assertThrows(\yii\swiftsmser\exceptions\ClassNotFoundException::class, function(){
+            Yii::$app->swiftsmser->promotional;
+        });
+    }
+
     public function testGatewaySelection()
     {
         $this->assertInstanceOf(\yii\swiftsmser\transporter\ICloudMessage::class,\Yii::$app->swiftsmser->transactional);

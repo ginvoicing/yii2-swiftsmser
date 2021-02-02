@@ -12,6 +12,7 @@ use yii\swiftsmser\TransporterInterface;
 class Biz2 extends Base implements TransporterInterface
 {
     private $_baseApi = 'http://biz2.smslounge.in/api/v2/';
+
     public function getBalance():float
     {
         // TODO: Implement getBalance() method.
