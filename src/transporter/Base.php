@@ -18,7 +18,7 @@ abstract class Base
         $this->_attributes = $params;
     }
 
-    public function __get($name)
+    public function __get(string $name):string
     {
         if (!isset($this->_attributes[$name])) {
             throw new UnknownPropertyException("\"{$name}\" is an invalid property.", 210419831);
