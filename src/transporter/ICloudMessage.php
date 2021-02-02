@@ -11,6 +11,7 @@ use yii\swiftsmser\TransporterInterface;
 
 class ICloudMessage extends Base implements TransporterInterface
 {
+    private $_baseApi = 'http://msg.icloudsms.com/rest/services/sendSMS/';
     public function getBalance():float
     {
         // TODO: Implement getBalance() method.

@@ -20,7 +20,6 @@ class ComponentTest extends Codeception\Test\Unit
                     'class' => '\yii\swiftsmser\transporter\Biz2',
                     'type' => 'promotional',
                     'params' => [
-                        'baseApi' => 'http://biz2.smslounge.in/api/v2/',
                         'apiKey' => '32423423'
                     ]
                 ],
@@ -28,7 +27,6 @@ class ComponentTest extends Codeception\Test\Unit
                     'class' => '\yii\swiftsmser\transporter\ICloudMessage',
                     'type' => 'transactional',
                     'params' => [
-                        'baseApi' => 'http://msg.icloudsms.com/rest/services/sendSMS/',
                         'apiKey' => '234234234'
                     ]
                 ]
@@ -36,36 +34,27 @@ class ComponentTest extends Codeception\Test\Unit
         ]);
     }
 
-    public function testSelectionOfPromotionalGatewayException()
+    public function testBadGatewayException()
     {
         Yii::$app->set('swiftsmser', [
             'class' => '\yii\swiftsmser\Gateway',
             'transporters' => []
         ]);
         $this->assertThrows(\yii\swiftsmser\exceptions\BadGatewayException::class, function(){
-            Yii::$app->swiftsmser->promotional;
+            Yii::$app->swiftsmser->transactional->unknown;
         });
-    }
-
-    public function testSelectionOfTransactionalGatewayException()
-    {
-        Yii::$app->set('swiftsmser', [
-            'class' => '\yii\swiftsmser\Gateway',
-            'transporters' => []
-        ]);
         $this->assertThrows(\yii\swiftsmser\exceptions\BadGatewayException::class, function(){
-            Yii::$app->swiftsmser->transactional;
+            Yii::$app->swiftsmser->promotional->unknown;
         });
     }
 
     public function testUnknownPropertyException()
     {
-        Yii::$app->set('swiftsmser', [
-            'class' => '\yii\swiftsmser\Gateway',
-            'transporters' => []
-        ]);
         $this->assertThrows(\yii\base\UnknownPropertyException::class, function(){
-            Yii::$app->swiftsmser->unknown;
+            Yii::$app->swiftsmser->transactional->unknown;
+        });
+        $this->assertThrows(\yii\base\UnknownPropertyException::class, function(){
+            Yii::$app->swiftsmser->promotional->unknown;
         });
     }
 

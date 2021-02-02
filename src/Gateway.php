@@ -47,7 +47,7 @@ class Gateway extends Component
                 return new $selected_transporter['class']($selected_transporter['params']);
             }
         }
-        throw new BadGatewayException("No {$type} sms transporter is available.", 210419832);
+        throw new BadGatewayException("No {$type} sms transporter is defined.", 210419832);
     }
 
     public function getSenderId():string
