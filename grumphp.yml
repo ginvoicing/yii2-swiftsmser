@@ -1,0 +1,39 @@
+grumphp:
+    hooks_dir: ~
+    hooks_preset: local
+    stop_on_failure: false
+    ignore_unstaged_changes: false
+    hide_circumvention_tip: false
+    process_timeout: 500
+    ascii:
+        failed: grumphp-grumpy.txt
+        succeeded: grumphp-happy.txt
+    parallel:
+        enabled: true
+        max_workers: 32
+    fixer:
+        enabled: true
+        fix_by_default: false
+    tasks:
+        phpcs:
+            standard:
+                - Yii2
+            severity: ~
+            error_severity: ~
+            warning_severity: 6
+            tab_width: 4
+            report: full
+            report_width: ~
+            encoding: ~
+            ignore_patterns: ['/vendor/','/tests/', '/.idea/']
+            sniffs: []
+            triggered_by:
+                - php
+        phpmd:
+            whitelist_patterns:
+                - /^\/src\/(.*)/
+            ruleset: ['cleancode','codesize','naming','unused']
+            triggered_by:
+                - php
+    testsuites: []
+    extensions: []
