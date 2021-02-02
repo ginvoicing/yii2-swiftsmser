@@ -10,6 +10,32 @@ class ComponentTest extends Codeception\Test\Unit
 {
     use \Codeception\AssertThrows;
 
+    protected function _before()
+    {
+        Yii::$app->set('swiftsmser', [
+            'class' => '\yii\swiftsmser\Gateway',
+            'senderId' => 'GINVCN',
+            'transporters' => [
+                [
+                    'class' => '\yii\swiftsmser\transporter\Biz2',
+                    'type' => 'promotional',
+                    'params' => [
+                        'baseApi' => 'http://biz2.smslounge.in/api/v2/',
+                        'apiKey' => '32423423'
+                    ]
+                ],
+                [
+                    'class' => '\yii\swiftsmser\transporter\ICloudMessage',
+                    'type' => 'transactional',
+                    'params' => [
+                        'baseApi' => 'http://msg.icloudsms.com/rest/services/sendSMS/',
+                        'apiKey' => '234234234'
+                    ]
+                ]
+            ]
+        ]);
+    }
+
     public function testSelectionOfPromotionalGatewayException()
     {
         Yii::$app->set('swiftsmser', [
@@ -45,27 +71,6 @@ class ComponentTest extends Codeception\Test\Unit
 
     public function testGatewaySelection()
     {
-        Yii::$app->set('swiftsmser', [
-            'class' => '\yii\swiftsmser\Gateway',
-            'transporters' => [
-                [
-                    'class' => '\yii\swiftsmser\transporter\Biz2',
-                    'type' => 'promotional',
-                    'params' => [
-                        'baseApi' => 'http://biz2.smslounge.in/api/v2/',
-                        'apiKey' => '32423423'
-                    ]
-                ],
-                [
-                    'class' => '\yii\swiftsmser\transporter\ICloudMessage',
-                    'type' => 'transactional',
-                    'params' => [
-                        'baseApi' => 'http://msg.icloudsms.com/rest/services/sendSMS/',
-                        'apiKey' => '234234234'
-                    ]
-                ]
-            ]
-        ]);
         $this->assertInstanceOf(\yii\swiftsmser\transporter\ICloudMessage::class,\Yii::$app->swiftsmser->transactional);
         $this->assertInstanceOf(\yii\swiftsmser\transporter\Biz2::class, \Yii::$app->swiftsmser->promotional);
     }

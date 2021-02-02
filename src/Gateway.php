@@ -49,4 +49,13 @@ class Gateway extends Component
         }
         throw new BadGatewayException("No {$type} sms transporter is available.", 210419832);
     }
+
+    public function getSenderId():string
+    {
+        return $this->transporters['senderId'];
+    }
+    public function setSenderId(string $sender_id)
+    {
+        $this->transporters['senderId'] = $sender_id;
+    }
 }
