@@ -47,6 +47,7 @@ class GatewayTest extends Codeception\Test\Unit
 
    public function testSendTransactionalSMS()
     {
+        /** @var \yii\swiftsmser\ResponseInterface $response */
        $response = Yii::$app->swiftsmser->transactional->send(
             (new \yii\swiftsmser\SMSPacket())
                 ->setTemplateID('34a7b0e7-58cd-40b5-a3d9-c901948ec33d')
@@ -65,6 +66,7 @@ class GatewayTest extends Codeception\Test\Unit
                 ->setEntityId('1101147480000010561')
                 ->setHeaderId('1105158201172710267')
             , ['9888300750']);*/
+        $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());
     }
 
    public function testSendPromotionalSMS()
@@ -78,6 +80,8 @@ class GatewayTest extends Codeception\Test\Unit
                 ->setEntityId('1101147480000010561')
                 ->setHeaderId('1105158201172710267')
             , ['9888300750']);
+        /** @var \yii\swiftsmser\ResponseInterface $response */
+        $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());
     }
 
 }

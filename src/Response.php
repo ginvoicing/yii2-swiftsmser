@@ -62,7 +62,7 @@ class Response implements ResponseInterface
         return $this;
     }
 
-    public function getStatus(): int
+    public function getStatus(): string
     {
         return $this->_status;
     }

@@ -62,8 +62,8 @@ class Biz2 extends Base implements TransporterInterface
             ->setHeaders(['Content-Type' => 'application/json'])
             ->post($this->_baseApi . 'sms/template?access_token=' . $this->apiKey);
         $responseObject = new Response();
-        if ($rawResponse==null) {
-            return $responseObject;
+        if ($rawResponse == null) {
+            throw new SendException('Connectivity problem');
         }
         $responseObject->setRaw($rawResponse);
         if ($responseObject->getDecoded()->status == 200 && count($responseObject->getDecoded()->data) === 1) {

@@ -45,5 +45,5 @@ interface ResponseInterface
     public function setResponseId(string $resp_id): self;
     public function setRaw(string $raw): self;
     public function setStatus(string $status): self;
-    public function getStatus(): int;
+    public function getStatus(): string;
 }
