@@ -8,66 +8,110 @@
 
 namespace yii\swiftsmser;
 
+use linslin\yii2\curl\Curl;
+use MyCLabs\Enum\Enum;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
+use yii\swiftsmser\enum\Type;
 use yii\swiftsmser\exceptions\BadGatewayException;
-use yii\swiftsmser\exceptions\ClassNotFoundException;
 use yii\swiftsmser\exceptions\TransporterNotFoundException;
 
 class Gateway extends Component
 {
-    /** @var array */
-    public $transporters;
+    private $_transporters;
+    private $_senderId;
+    private $_transporter;
 
     public function __construct($config = [])
     {
-        $this->transporters=$config['transporters'];
+        if (!isset($config['transporters'])) {
+            throw new InvalidConfigException('Property "transporters" is mandatory for swiftsmser component.');
+        }
+        if (!isset($config['senderId'])) {
+            throw new InvalidConfigException('Property "senderId" is mandatory for swiftsmser component.');
+        }
+        $this->_transporters = $config['transporters'];
+        $this->_senderId = $config['senderId'];
+
         parent::__construct($config);
     }
 
-    public function getPromotional(): TransporterInterface
+    /**
+     * @return mixed
+     */
+    public function getTransporter()
     {
-        return $this->getGateway('promotional');
+        return $this->_transporter;
     }
 
-    public function getTransactional(): TransporterInterface
+    public function getTransporters(): array
     {
-        return $this->getGateway('transactional');
+        return $this->_transporters;
     }
 
-    private function getGateway(string $type): TransporterInterface
+    public function setTransporters(array $transporters): void
+    {
+        $this->_transporters = $transporters;
+    }
+
+    public function getSenderId(): string
+    {
+        return $this->_senderId;
+    }
+
+    public function setSenderId(string $sender_id)
+    {
+        $this->_senderId = $sender_id;
+    }
+
+    public function getPromotional(): self
+    {
+        $this->_transporter = $this->getGateway(Type::PROMOTIONAL());
+        return $this;
+    }
+
+    public function getTransactional(): self
+    {
+        $this->_transporter = $this->getGateway(Type::TRANSACTIONAL());
+        return $this;
+    }
+
+    public function send(SMSPacket $packet, array $to = []): ResponseInterface
+    {
+        return $this->_transporter->send($packet, $to);
+    }
+
+    public function getBalance(): int
+    {
+        return $this->_transporter->getBalance();
+    }
+
+    private function getGateway(Type $type): TransporterInterface
     {
         $gateways = [];
         foreach ($this->transporters as $transporter) {
-            if (isset($transporter['type']) && $transporter['type'] === $type) {
-                $gateways[]=$transporter;
+            if (isset($transporter['type']) && $transporter['type'] == $type) {
+                $gateways[] = $transporter;
             }
         }
         if (count($gateways)) {
             $selected_transporter = $gateways[array_rand($gateways)];
             if (isset($selected_transporter['class']) && class_exists($selected_transporter['class'])) {
-                return new $selected_transporter['class']($selected_transporter['params']);
+                // Create curl object to be passed.
+                $curlObject = new Curl();
+                // useragent for the gateway calls.
+                $curlObject->setOption(CURLOPT_USERAGENT, 'yii-swiftsmser');
+
+                $params = [
+                    'class' => $selected_transporter['class'],
+                    'type' => $type
+                ];
+                $params += $selected_transporter['params'] ?? [];
+                return \Yii::createObject($params, [$this->senderId, $curlObject]);
             } else {
-                throw new TransporterNotFoundException("Defined transporter \"{$selected_transporter['class']}\" not found.");
+                throw new TransporterNotFoundException("Not found: \"{$selected_transporter['class']}\"");
             }
         }
-        throw new BadGatewayException("No {$type} sms transporter is defined.", 210419832);
-    }
-
-    public function getSenderId():string
-    {
-        return $this->transporters['senderId'];
-    }
-    public function setSenderId(string $sender_id)
-    {
-        $this->transporters['senderId'] = $sender_id;
-    }
-
-    private function validateConfigurations()
-    {
-        if (!isset($this->transporters['senderId'])) {
-        }
-        if (!isset($this->transporters['transporters'])) {
-        }
+        throw new BadGatewayException("SMS {$type} transporter is undefined.", 210419832);
     }
 }

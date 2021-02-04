@@ -7,7 +7,7 @@
  */
 return [
     'id' => 'swiftsmser-tests',
-    'class' => 'yii\console\Application',
+    'class' => \yii\console\Application::class,
     'basePath' => \Yii::getAlias('@tests'),
     'runtimePath' => \Yii::getAlias('@tests/_output'),
     'bootstrap' => [],

@@ -10,28 +10,25 @@ namespace yii\swiftsmser;
 
 use yii\swiftsmser\exceptions\BalanceException;
 use yii\swiftsmser\exceptions\SendException;
+use yii\validators\NumberValidator;
 
 interface TransporterInterface
 {
     /**
-     * Get user balance
+     * Get sms balance in user's account
+     *
+     * @return mixed
      * @throws BalanceException
-     * @return float
      */
-    public function getBalance(): float;
+    public function getBalance();
 
     /**
-     * @param array $params
+     * Send sms to the defined user
+     *
+     * @param SMSPacket $packet SMS object to be sent.
+     * @param array $to Array of phone numbers to be sent.
+     * @return mixed
      * @throws SendException
-     * @return string
      */
-    public function sendMessage(array $params):string;
-
-    /**
-     * @param string $id
-     * @param string $phone
-     * @param int $all
-     * @return array
-     */
-    public function getMessageStatus($id, $phone, $all = 2):array;
+    public function send(SMSPacket $packet, array $to = []): ResponseInterface;
 }

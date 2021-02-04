@@ -8,14 +8,20 @@
 
 namespace yii\swiftsmser\transporter;
 
+use linslin\yii2\curl\Curl;
 use yii\base\UnknownPropertyException;
 
 abstract class Base
 {
     protected $_attributes;
-    public function __construct(array $params)
+    protected $_curl;
+    protected $_senderId;
+
+    public function __construct(string $sender_id, Curl $curl, $config = [])
     {
-        $this->_attributes = $params;
+        $this->_attributes = $config;
+        $this->_senderId = $sender_id;
+        $this->_curl = $curl;
     }
 
     public function __get(string $name):string
