@@ -3,7 +3,7 @@ up: clean
 dbssh:
 	docker-compose exec smserdb /bin/bash
 db:
-	docker-compose exec smserdb /usr/bin/mysql -u smser -ppassword -h 127.0.0.1 -P 3306 smser
+	docker-compose exec smserdb /usr/bin/mysql -u smser -ppassword -h 127.0.0.1 smser
 down:
 	docker-compose stop
 clean:

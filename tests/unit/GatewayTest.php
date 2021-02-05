@@ -12,6 +12,7 @@ class GatewayTest extends Codeception\Test\Unit
 
     protected function _before(): void
     {
+        Yii::$app->get('db',)->dsn = 'mysql:host=127.0.0.1;port='.$_ENV['MYSQL_PORT'].';dbname=smser';
         Yii::$app->set('swiftsmser', [
             'class' => \yii\swiftsmser\Gateway::class,
             'senderId' => 'GINVCN',
@@ -36,11 +37,6 @@ class GatewayTest extends Codeception\Test\Unit
             ]
         ]);
         parent::_before();
-    }
-
-    // HOOK: used after configuration is loaded
-    public function _initialize()
-    {
     }
 
     public function testMysqlConnection(){

@@ -14,14 +14,14 @@ services:
     labels:
       - smser-db
     ports:
-    - 3306:3306
+    - ${MYSQL_PORT}:3306
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-u$MYSQL_ROOT_PASSWORD", "-p$MYSQL_PASSWORD" , "-h", "127.0.0.1"]
+      test: ["CMD", "mysqladmin", "ping", "-u$MYSQL_ROOT_PASSWORD", "-p$MYSQL_PASSWORD" , "-h", "127.0.0.1" , "-P", "3006"]
       interval: 10s
       timeout: 20s
       retries: 5
