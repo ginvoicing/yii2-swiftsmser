@@ -62,30 +62,34 @@ class GatewayTest extends Codeception\Test\Unit
    public function testSendTransactionalSMS()
     {
         /** @var \yii\swiftsmser\ResponseInterface $response */
-       $response = Yii::$app->swiftsmser->transactional->send(
-            (new \yii\swiftsmser\SMSPacket())
-                ->setTemplateID('34a7b0e7-58cd-40b5-a3d9-c901948ec33d')
-                ->setBody(
-                    "Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
-                    ["Deepak Jangra","EST-004","Rs. 424.11","https://ginvcn.in/34324","Raj Communication"]
-                )
-                ->setEntityId('1101147480000010561')
-                ->setHeaderId('1105158201172710267')
-                ->setDeduction(2)
-            , ['9888300750']);
-
-        /*$response = Yii::$app->swiftsmser->transactional->send(
+        $response = Yii::$app->swiftsmser->transactional->send(
             (new \yii\swiftsmser\SMSPacket())
                 ->setBody(
                     "Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
-                    ["Tarun Jangra","EST-003","Rs. 24.11","https://ginvcn.in/34324","Deepak Communication"]
+                    ["Rahul","EST-213","Rs. 45.21","https://ginvcn.in/iud2","universal Communication"]
                 )
                 ->setTemplateID('1107161061671432172')
                 ->setEntityId('1101147480000010561')
                 ->setHeaderId('1105158201172710267')
                 ->setDeduction(2)
-            , ['9888300750']);*/
+            , ['9888300750']);
         $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());
+    }
+
+    public function testSendTransactionalSMSWithTemplateAPI() {
+        /** @var \yii\swiftsmser\ResponseInterface $response */
+        /*$response = Yii::$app->swiftsmser->transactional->send(
+             (new \yii\swiftsmser\SMSPacket())
+                 ->setTemplateID('34a7b0e7-58cd-40b5-a3d9-c901948ec33d')
+                 ->setBody(
+                     "Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
+                     ["Deepak Jangra","EST-004","Rs. 424.11","https://ginvcn.in/34324","Raj Communication"]
+                 )
+                 ->setEntityId('1101147480000010561')
+                 ->setHeaderId('1105158201172710267')
+                 ->setDeduction(2)
+             , ['9888300750']);*/
+
     }
 
    public function testSendPromotionalSMS()

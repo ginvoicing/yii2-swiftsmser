@@ -46,8 +46,12 @@ class Biz2 extends Base implements TransporterInterface
         throw new BalanceException('{"status":"FAILED","message": "Bad balance response","output": "' . $rawResponse . '"}');
     }
 
-
     public function send(SMSPacket $packet, array $to = []): ResponseInterface
+    {
+        return $this->sendWithNormalAPI($packet, $to);
+    }
+
+    private function sendWithTemplateApi(SMSPacket $packet, array $to = []): ResponseInterface
     {
         $data = [
             'service' => 'T',
@@ -76,16 +80,20 @@ class Biz2 extends Base implements TransporterInterface
         }
     }
 
-    public function sendold(SMSPacket $smsObject, array $to = []): ResponseInterface
+    private function sendWithNormalAPI(SMSPacket $smsObject, array $to = []): ResponseInterface
     {
         $data = [
-            'service' => 'T',
-            'to' => implode(',', $to),
-            'sender' => $this->_senderId,
-            'message' => $smsObject->getBody(),
-            'entity_id' => $smsObject->getEntityId(),
-            'header_id' => $smsObject->getHeaderId(),
-            'template_id' => $smsObject->getTemplateId()
+            'root' =>  [
+                'sender' => $this->_senderId,
+                'service' => 'T',
+                'entity_id' => $smsObject->getEntityId(),
+                'header_id' => $smsObject->getHeaderId(),
+                'template_id' => $smsObject->getTemplateId()
+            ],
+            'nodes' => [
+                'to' => implode(',', $to),
+                'message' => $smsObject->getBody()
+            ]
         ];
         if (strlen($smsObject->getBody()) != strlen(utf8_decode($smsObject->getBody()))) {
             $data['type'] = 'U';
