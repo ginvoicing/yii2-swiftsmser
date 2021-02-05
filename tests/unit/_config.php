@@ -11,5 +11,13 @@ return [
     'basePath' => \Yii::getAlias('@tests'),
     'runtimePath' => \Yii::getAlias('@tests/_output'),
     'bootstrap' => [],
-    'components' => [],
+    'components' => [
+        'db' => [
+            'class' => \yii\db\Connection::class,
+            'dsn' => 'mysql:host=127.0.0.1;dbname=smser',
+            'username' => 'smser',
+            'password' => 'password',
+            'charset' => 'utf8'
+        ]
+    ]
 ];

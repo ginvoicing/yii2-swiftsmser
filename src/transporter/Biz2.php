@@ -29,7 +29,7 @@ class Biz2 extends Base implements TransporterInterface
             ->setHeaders(['Authorization' => "Bearer {$this->apiKey}"])
             ->post($this->_baseApi . 'account/balance');
         if ($rawResponse==null) {
-            throw new BalanceException('Connectivity problem');
+            throw new BalanceException('{"status":"FAILED","message": "Connection problem with the gateway.","output": null}');
         }
         $decodedResponse = json_decode($rawResponse, true);
 
@@ -41,9 +41,9 @@ class Biz2 extends Base implements TransporterInterface
                     return (int)$data['credits'];
                 }
             }
-            throw new BalanceException("Bad balance response: {$rawResponse}");
+            throw new BalanceException('{"status":"FAILED","message": "Bad balance response","output": "' . $rawResponse . '"}');
         }
-        throw new BalanceException("Bad balance response: {$rawResponse}");
+        throw new BalanceException('{"status":"FAILED","message": "Bad balance response","output": "' . $rawResponse . '"}');
     }
 
 
@@ -56,20 +56,23 @@ class Biz2 extends Base implements TransporterInterface
             'to' => implode(',', $to)
         ];
 
+        $json_encode = json_encode($data);
+
         $rawResponse = $this->_curl
             ->reset()
-            ->setOption(CURLOPT_POSTFIELDS, json_encode($data))
+            ->setOption(CURLOPT_POSTFIELDS, $json_encode)
             ->setHeaders(['Content-Type' => 'application/json'])
             ->post($this->_baseApi . 'sms/template?access_token=' . $this->apiKey);
         $responseObject = new Response();
         if ($rawResponse == null) {
-            throw new SendException('Connectivity problem');
+            throw new SendException('{"status":"FAILED","message": "Connection problem.","input":"' . $json_encode . '","output": null}');
         }
         $responseObject->setRaw($rawResponse);
         if ($responseObject->getDecoded()->status == 200 && count($responseObject->getDecoded()->data) === 1) {
-            return $responseObject->setStatus(Status::SUCCESS())->setResponseId($responseObject->getDecoded()->data[0]->id);
+            return $responseObject->setStatus(Status::SUCCESS())
+                ->setResponseId($responseObject->getDecoded()->data[0]->id);
         } else {
-            return $responseObject->setStatus(Status::FAILED());
+            throw new SendException('{"status":"FAILED","message": "Bad response.","input":"' . $json_encode . '","output": "' . $responseObject->getRaw() . '"}');
         }
     }
 
@@ -98,13 +101,14 @@ class Biz2 extends Base implements TransporterInterface
             ->post($this->_baseApi . 'sms/send/json?');
         $responseObject = new Response();
         if ($rawResponse==null) {
-            throw new SendException('Connectivity problem');
+            throw new SendException('{"status":"FAILED","message": "Connection problem.","input":"' . $json_encode . '","output": null}');
         }
         $responseObject->setRaw($rawResponse);
         if ($responseObject->getDecoded()->status == 200) {
-            return $responseObject->setStatus(Status::SUCCESS());
+            return $responseObject->setStatus(Status::SUCCESS())
+                ->setResponseId($responseObject->getDecoded()->data[0]->id);
         } else {
-            throw new SendException('Bad response: ' . $responseObject->getRaw());
+            throw new SendException('{"status":"FAILED","message": "Bad response.","input":"' . $json_encode . '","output": "' . $responseObject->getRaw() . '"}');
         }
     }
 }

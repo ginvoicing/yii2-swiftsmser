@@ -10,10 +10,13 @@ namespace yii\swiftsmser;
 
 class SMSPacket
 {
-    private $_header;
-    private $_body;
-    private $_footer;
+    private $_header = null;
+    private $_body = null;
+    private $_footer = null;
     private $_variables = [];
+
+    /** @var integer */
+    private $_deduction = 0;
 
     /** @var string DLT template id */
     private $_templateId;
@@ -93,6 +96,17 @@ class SMSPacket
     {
         $this->_footer = $footer;
         $this->_variables += array_merge($this->_variables, $vars);
+        return $this;
+    }
+
+    public function getDeduction(): int
+    {
+        return $this->_deduction;
+    }
+
+    public function setDeduction(int $deduction): self
+    {
+        $this->_deduction = $deduction;
         return $this;
     }
 }

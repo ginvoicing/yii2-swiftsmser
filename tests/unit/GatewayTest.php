@@ -10,28 +10,46 @@ class GatewayTest extends Codeception\Test\Unit
 {
     use \Codeception\AssertThrows;
 
-    protected function _before()
+    protected function _before(): void
     {
         Yii::$app->set('swiftsmser', [
             'class' => \yii\swiftsmser\Gateway::class,
             'senderId' => 'GINVCN',
+            'logging' => [
+                'connection' => 'db'
+            ],
             'transporters' => [
                 [
                     'class' => \yii\swiftsmser\transporter\Biz2::class,
                     'type' => \yii\swiftsmser\enum\Type::TRANSACTIONAL(),
                     'params' => [
-                        'apiKey' => '17003704045822bffef9130561b72353'
+                        'apiKey' => $_ENV['BIZ2_API_KEY']
                     ]
                 ],
                 [
                     'class' => \yii\swiftsmser\transporter\ICloudMessage::class,
                     'type' => \yii\swiftsmser\enum\Type::PROMOTIONAL(),
                     'params' => [
-                        'apiKey' => '56f5a5be78d397d3b45925a3f657158'
+                        'apiKey' => $_ENV['ICLOUD_API_KEY']
                     ]
                 ]
             ]
         ]);
+        parent::_before();
+    }
+
+    // HOOK: used after configuration is loaded
+    public function _initialize()
+    {
+    }
+
+    public function testMysqlConnection(){
+        if(\Yii::$app->get('swiftsmser')->logging){
+            \Yii::$app->runAction('migrate/up', [
+                'migrationPath' => __DIR__.'/../../src/migrations',
+                'interactive' => 0
+            ]);
+        }
     }
 
     public function testBalanceFromPromotionalGateway()
@@ -51,20 +69,25 @@ class GatewayTest extends Codeception\Test\Unit
        $response = Yii::$app->swiftsmser->transactional->send(
             (new \yii\swiftsmser\SMSPacket())
                 ->setTemplateID('34a7b0e7-58cd-40b5-a3d9-c901948ec33d')
-                ->setVariables(["Tarun Jangra","EST-001","Rs. 334.11","Hello Communication"])
+                ->setBody(
+                    "Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
+                    ["Deepak Jangra","EST-004","Rs. 424.11","https://ginvcn.in/34324","Raj Communication"]
+                )
                 ->setEntityId('1101147480000010561')
                 ->setHeaderId('1105158201172710267')
+                ->setDeduction(2)
             , ['9888300750']);
 
-        /*Yii::$app->swiftsmser->transactional->send(
+        /*$response = Yii::$app->swiftsmser->transactional->send(
             (new \yii\swiftsmser\SMSPacket())
                 ->setBody(
-                    "Thank you for your payment. We have received {#var#} against your balance fee. Thanks again, {#var#} ginvoicing.com",
-                    ["Rs 344.3", "HelloCommunication"]
+                    "Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
+                    ["Tarun Jangra","EST-003","Rs. 24.11","https://ginvcn.in/34324","Deepak Communication"]
                 )
-                ->setTemplateID('1107161061558263764')
+                ->setTemplateID('1107161061671432172')
                 ->setEntityId('1101147480000010561')
                 ->setHeaderId('1105158201172710267')
+                ->setDeduction(2)
             , ['9888300750']);*/
         $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());
     }
@@ -79,6 +102,7 @@ class GatewayTest extends Codeception\Test\Unit
                 ->setTemplateID('1107161061675566196')
                 ->setEntityId('1101147480000010561')
                 ->setHeaderId('1105158201172710267')
+                ->setDeduction(2)
             , ['9888300750']);
         /** @var \yii\swiftsmser\ResponseInterface $response */
         $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());

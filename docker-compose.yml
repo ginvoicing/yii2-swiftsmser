@@ -1,0 +1,30 @@
+version: '3.3'
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 101.5.0.0/24
+
+services:
+  smserdb:
+    image: mariadb:10.3.27-focal
+    container_name: smserdb
+    labels:
+      - smser-db
+    ports:
+    - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u$MYSQL_ROOT_PASSWORD", "-p$MYSQL_PASSWORD" , "-h", "127.0.0.1"]
+      interval: 10s
+      timeout: 20s
+      retries: 5
+    networks:
+      vpcbr:
+        ipv4_address: 101.5.0.4

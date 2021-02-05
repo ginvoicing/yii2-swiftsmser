@@ -19,21 +19,21 @@ interface LoggerInterface
     public function setRecord($data);
 
     /**
-     * Update log record by sms_id
+     * Update log record by response_id
      *
-     * @param string $sms_id
+     * @param string $response_id
      * @param array $data
      * @return bool
      */
-    public function updateRecordBySmsId($sms_id, $data);
+    public function updateRecordBySmsId($response_id, $data);
 
     /**
-     * Update log record by sms_id and recipient phone number
+     * Update log record by response_id and recipient phone number
      *
-     * @param string $sms_id
+     * @param string $response_id
      * @param string $phone
      * @param array $data
      * @return bool
      */
-    public function updateRecordBySmsIdAndPhone($sms_id, $phone, $data);
+    public function updateRecordBySmsIdAndPhone($response_id, $phone, $data);
 }

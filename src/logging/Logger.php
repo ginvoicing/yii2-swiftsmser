@@ -19,7 +19,7 @@ class Logger extends BaseObject implements LoggerInterface
     /**
      * @var string
      */
-    public $tableName = '{{%swiftsmser_log}}';
+    public $tableName = '{{%ginni_sms_logger}}';
 
     /**
      * @var array|string|\yii\db\Connection
@@ -71,11 +71,11 @@ class Logger extends BaseObject implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function updateRecordBySmsId($sms_id, $data)
+    public function updateRecordBySmsId($response_id, $data)
     {
-        if (!empty($sms_id)) {
+        if (!empty($response_id)) {
             $record = new $this->_model();
-            $record = $record->findOne(['sms_id' => $sms_id]);
+            $record = $record->findOne(['response_id' => $response_id]);
             if ($record) {
                 foreach ($data as $key => $value) {
                     if ($record->hasAttribute($key)) {
@@ -93,11 +93,11 @@ class Logger extends BaseObject implements LoggerInterface
     /**
      * @inheritdoc
      */
-    public function updateRecordBySmsIdAndPhone($sms_id, $phone, $data)
+    public function updateRecordBySmsIdAndPhone($response_id, $phone, $data)
     {
         if (!empty($sms_id)) {
             $record = new $this->_model();
-            $record = $record->findOne(['sms_id' => $sms_id, 'phone' => $phone]);
+            $record = $record->findOne(['response_id' => $response_id, 'phone' => $phone]);
             if ($record) {
                 foreach ($data as $key => $value) {
                     if ($record->hasAttribute($key)) {

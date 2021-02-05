@@ -26,13 +26,11 @@ class Sql extends ActiveRecord
     {
         return [
             [['phone', 'message'], 'required'],
-            [['type', 'send_time', 'status', 'error'], 'integer'],
-            [['sms_id'], 'string', 'max' => 40],
+            [['response_id'], 'string', 'max' => 40],
             [['phone'], 'string', 'max' => 25],
             [['message'], 'string', 'max' => 800],
-            [['cost'], 'number'],
-            [['operator'], 'string', 'max' => 50],
-            [['region'], 'string', 'max' => 150],
+            [['deduction'], 'number'],
+            [['transporter'], 'string', 'max' => 50]
         ];
     }
 }

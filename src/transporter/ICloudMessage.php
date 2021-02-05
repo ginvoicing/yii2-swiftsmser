@@ -9,6 +9,7 @@
 namespace yii\swiftsmser\transporter;
 
 use yii\swiftsmser\enum\Status;
+use yii\swiftsmser\enum\Type;
 use yii\swiftsmser\exceptions\BalanceException;
 use yii\swiftsmser\exceptions\SendException;
 use yii\swiftsmser\exceptions\TimeLimitException;
@@ -30,7 +31,7 @@ class ICloudMessage extends Base implements TransporterInterface
             ->get($this->_baseApi . 'getClientRouteBalance?AUTH_KEY=' . $this->apiKey);
         $decodedResponse = json_decode($rawResponse, true);
         if ($rawResponse == null) {
-            throw new BalanceException('Connectivity problem');
+            throw new BalanceException('{"status":"FAILED","message": "Connection problem with the gateway.","output": null}');
         }
         // You will get responseCode parameter only if there
         // is some error in the response of the API.
@@ -45,9 +46,9 @@ class ICloudMessage extends Base implements TransporterInterface
                     return (int)$routes['routeBalance'];
                 }
             }
-            throw new BalanceException("Bad balance response: {$rawResponse}");
+            throw new BalanceException('{"status":"FAILED","message": "Bad balance response","output": "' . $rawResponse . '"}');
         }
-        throw new BalanceException("Bad balance response: {$rawResponse}");
+        throw new BalanceException('{"status":"FAILED","message": "Bad balance response","output": "' . $rawResponse . '"}');
     }
 
     public function send(SMSPacket $packet, array $to = []): ResponseInterface
@@ -62,6 +63,7 @@ class ICloudMessage extends Base implements TransporterInterface
             'entityid' => $packet->getEntityId(),
             'templateid' => $packet->getTemplateId()
         ];
+        $json_encode = json_encode($data);
         if (strlen($body) != strlen(utf8_decode($body))) {
             $data['smsContentType'] = 'Unicode';
         } else {
@@ -73,15 +75,16 @@ class ICloudMessage extends Base implements TransporterInterface
 
         $responseObject = new Response();
         if ($rawResponse == null) {
-            throw new SendException('Connectivity problem');
+            throw new SendException('{"status":"FAILED","message": "Connection problem.","input":"' . $json_encode . '","output": null}');
         }
         $responseObject->setRaw($rawResponse);
         if ($responseObject->getDecoded()->responseCode == 3001) {
-            return $responseObject->setStatus(Status::SUCCESS());
+            return $responseObject->setStatus(Status::SUCCESS())
+                ->setResponseId($responseObject->getDecoded()->response);
         } elseif ($responseObject->getDecoded()->responseCode == 3114) {
-            throw new TimeLimitException('Message can not be sent between 9:00 PM to 9:05:05 AM');
+            throw new SendException('{"status":"FAILED","message": "Promotional messages can not be sent between 9:00 PM to 9:05:05 AM","input":"' . $json_encode . '","output": null}');
         } else {
-            throw new SendException('Bad response: ' . $responseObject->getRaw());
+            throw new SendException('{"status":"FAILED","message": "Bad response.","input":"' . $json_encode . '","output": "' . $responseObject->getRaw() . '"}');
         }
     }
 }
