@@ -6,19 +6,22 @@
  * Time: 08:15
  */
 
-class m321203_203317_init extends \yii\db\Migration
+namespace yii\swiftsmser\migrations;
+
+class M321203203317SMSLogger extends \yii\db\Migration
 {
-    private $_tableName = '{{%ginni_sms_logger}}';
+    public $tableName = '{{%ginni_sms_logger}}';
+
     public function init()
     {
         /**
          * @var \yii\swiftsmser\logging\Logger $logger
          */
-        $logger = Yii::$app->swiftsmser->getLogger();
+        $logger = \Yii::$app->swiftsmser->getLogger();
         if ($logger === false) {
             throw new Exception('Logger must be set');
         }
-        $this->_tableName = $logger->getTableName();
+        $this->tableName = $logger->getTableName();
         $this->db = $logger->getConnection();
     }
 
@@ -29,7 +32,7 @@ class m321203_203317_init extends \yii\db\Migration
             // http://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
-        $this->createTable($this->_tableName, [
+        $this->createTable($this->tableName, [
             'id' => $this->primaryKey()->unsigned()->notNull(),
             'response_id' => $this->string(40)->null(),
             'phone' => $this->string(25)->notNull(),
@@ -46,6 +49,6 @@ class m321203_203317_init extends \yii\db\Migration
 
     public function safeDown()
     {
-        $this->dropTable($this->_tableName);
+        $this->dropTable($this->tableName);
     }
 }

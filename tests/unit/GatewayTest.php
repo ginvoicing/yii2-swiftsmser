@@ -42,7 +42,6 @@ class GatewayTest extends Codeception\Test\Unit
     public function testMysqlConnection(){
         if(\Yii::$app->get('swiftsmser')->logging){
             \Yii::$app->runAction('migrate/up', [
-                'migrationPath' => __DIR__.'/../../src/migrations',
                 'interactive' => 0
             ]);
         }
@@ -76,6 +75,9 @@ class GatewayTest extends Codeception\Test\Unit
         $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());
     }
 
+    /**
+     * @skip
+     */
     public function testSendTransactionalSMSWithTemplateAPI() {
         /** @var \yii\swiftsmser\ResponseInterface $response */
         /*$response = Yii::$app->swiftsmser->transactional->send(

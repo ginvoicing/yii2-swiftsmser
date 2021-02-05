@@ -14,3 +14,4 @@ require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
 
 Yii::setAlias('@tests', __DIR__);
 Yii::setAlias('@data', __DIR__ . DIRECTORY_SEPARATOR . '_data');
+Yii::setAlias('@yii/swiftsmser/migrations', dirname(__DIR__) . DIRECTORY_SEPARATOR. 'src'.DIRECTORY_SEPARATOR.'migrations');
