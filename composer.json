@@ -1,13 +1,13 @@
 {
-    "name": "tarunjangra/yii-swiftsmser",
+    "name": "ginvoicing/yii2-swiftsmser",
     "description": "The SMS gateway integration for different SMS clients for the Yii framework",
     "keywords": ["yii2", "swiftsmser", "sms", "gateway"],
-    "type": "yii-extension",
+    "type": "yii2-extension",
     "license": "MIT",
     "minimum-stability": "stable",
     "support": {
-        "issues": "https://github.com/tarunjangra/yii-swiftsmser/issues",
-        "source": "https://github.com/tarunjangra/yii-swiftsmser"
+        "issues": "https://github.com/ginvoicing/yii2-swiftsmser/issues",
+        "source": "https://github.com/ginvoicing/yii2-swiftsmser"
     },
     "authors": [
         {
