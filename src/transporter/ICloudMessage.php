@@ -51,7 +51,7 @@ class ICloudMessage extends Base implements TransporterInterface
         throw new BalanceException('{"status":"FAILED","message": "Bad balance response","output": "' . $rawResponse . '"}');
     }
 
-    public function send(SMSPacket $packet, array $to = []): ResponseInterface
+    public function send(SMSPacket &$packet, array $to = []): ResponseInterface
     {
         $body = $packet->getBody();
         $data = [

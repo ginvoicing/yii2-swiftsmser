@@ -10,7 +10,7 @@ namespace yii\swiftsmser\migrations;
 
 class M321203203317SMSLogger extends \yii\db\Migration
 {
-    public $tableName = '{{%ginni_sms_logger}}';
+    public $tableName = '{{%swiftsmser_logger}}';
 
     public function init()
     {
@@ -44,7 +44,7 @@ class M321203203317SMSLogger extends \yii\db\Migration
             'transporter' => $this->string(100),
             'updated_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP')->append('ON UPDATE NOW()'),
             'created_at' => $this->timestamp()->defaultExpression('NOW()')
-        ]);
+        ], $tableOptions);
     }
 
     public function safeDown()

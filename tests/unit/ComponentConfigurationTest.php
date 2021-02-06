@@ -47,10 +47,10 @@ class ComponentConfigurationTest extends Codeception\Test\Unit
             'transporters' => [],
             'senderId' => ''
         ]);
-        $this->assertThrows(\yii\swiftsmser\exceptions\BadGatewayException::class, function () {
+        $this->assertThrows(yii\base\InvalidConfigException::class, function () {
             Yii::$app->swiftsmser->transactional;
         });
-        $this->assertThrows(\yii\swiftsmser\exceptions\BadGatewayException::class, function () {
+        $this->assertThrows(yii\base\InvalidConfigException::class, function () {
             Yii::$app->swiftsmser->promotional;
         });
     }

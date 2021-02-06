@@ -30,5 +30,5 @@ interface TransporterInterface
      * @return mixed
      * @throws SendException
      */
-    public function send(SMSPacket $packet, array $to = []): ResponseInterface;
+    public function send(SMSPacket &$packet, array $to = []): ResponseInterface;
 }

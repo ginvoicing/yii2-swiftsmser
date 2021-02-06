@@ -19,7 +19,7 @@ class Logger extends BaseObject implements LoggerInterface
     /**
      * @var string
      */
-    public $tableName = '{{%ginni_sms_logger}}';
+    public $tableName = '{{%swiftsmser_logger}}';
 
     /**
      * @var array|string|\yii\db\Connection

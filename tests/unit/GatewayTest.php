@@ -16,8 +16,11 @@ class GatewayTest extends Codeception\Test\Unit
         Yii::$app->set('swiftsmser', [
             'class' => \yii\swiftsmser\Gateway::class,
             'senderId' => 'GINVCN',
+            'unicodeSMSCharLength' => 65,
+            'normalCharLength' => 165,
             'logging' => [
-                'connection' => 'db'
+                'connection' => 'db',
+                'tableName' => 'ginni_sms_logger'
             ],
             'transporters' => [
                 [
@@ -60,18 +63,17 @@ class GatewayTest extends Codeception\Test\Unit
 
    public function testSendTransactionalSMS()
     {
+        $smsPacket = (new \yii\swiftsmser\SMSPacket())
+            ->setBody(
+                "Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
+                ["राहुल","EST-213","Rs. 45.21","https://ginvcn.in/iud2","universal Communication"]
+            )
+            ->setTemplateID('1107161061671432172')
+            ->setEntityId('1101147480000010561')
+            ->setHeaderId('1105158201172710267');
+
         /** @var \yii\swiftsmser\ResponseInterface $response */
-        $response = Yii::$app->swiftsmser->transactional->send(
-            (new \yii\swiftsmser\SMSPacket())
-                ->setBody(
-                    "Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
-                    ["Rahul","EST-213","Rs. 45.21","https://ginvcn.in/iud2","universal Communication"]
-                )
-                ->setTemplateID('1107161061671432172')
-                ->setEntityId('1101147480000010561')
-                ->setHeaderId('1105158201172710267')
-                ->setDeduction(2)
-            , ['9888300750']);
+        $response = Yii::$app->swiftsmser->transactional->send($smsPacket,['9888300750']);
         $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());
     }
 
@@ -96,16 +98,15 @@ class GatewayTest extends Codeception\Test\Unit
 
    public function testSendPromotionalSMS()
     {
-        $response = Yii::$app->swiftsmser->promotional->send(
-            (new \yii\swiftsmser\SMSPacket())
-                ->setBody(
-                    "Dear {#var#}, There is a new invoice: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
-                    ["Deepak kumar","INV-0013","Rs 344.3", "https://gnvcn.in/44asj3","HelloCommunication"])
-                ->setTemplateID('1107161061675566196')
-                ->setEntityId('1101147480000010561')
-                ->setHeaderId('1105158201172710267')
-                ->setDeduction(2)
-            , ['9888300750']);
+        $smsPacket = (new \yii\swiftsmser\SMSPacket())
+            ->setBody(
+                "Dear {#var#}, There is a new invoice: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
+                ["Deepak kumar","INV-0013","Rs 344.3", "https://gnvcn.in/44asj3","HelloCommunication"])
+            ->setTemplateID('1107161061675566196')
+            ->setEntityId('1101147480000010561')
+            ->setHeaderId('1105158201172710267');
+
+        $response = Yii::$app->swiftsmser->promotional->send($smsPacket, ['9888300750']);
         /** @var \yii\swiftsmser\ResponseInterface $response */
         $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());
     }
