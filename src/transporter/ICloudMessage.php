@@ -9,10 +9,8 @@
 namespace yii\swiftsmser\transporter;
 
 use yii\swiftsmser\enum\Status;
-use yii\swiftsmser\enum\Type;
 use yii\swiftsmser\exceptions\BalanceException;
 use yii\swiftsmser\exceptions\SendException;
-use yii\swiftsmser\exceptions\TimeLimitException;
 use yii\swiftsmser\Response;
 use yii\swiftsmser\ResponseInterface;
 use yii\swiftsmser\SMSPacket;
@@ -51,7 +49,7 @@ class ICloudMessage extends Base implements TransporterInterface
         throw new BalanceException('{"status":"FAILED","message": "Bad balance response","output": "' . $rawResponse . '"}');
     }
 
-    public function send(SMSPacket &$packet, array $to = []): ResponseInterface
+    public function send(SMSPacket &$packet): ResponseInterface
     {
         $body = $packet->getBody();
         $data = [
@@ -59,9 +57,9 @@ class ICloudMessage extends Base implements TransporterInterface
             'message' => $body,
             'senderId' => $this->_senderId,
             'routeId' => 3,
-            'mobileNos' => implode(',', $to),
-            'entityid' => $packet->getEntityId(),
-            'templateid' => $packet->getTemplateId()
+            'mobileNos' => implode($this->_delimiter, $packet->to),
+            'entityid' => $packet->entityId,
+            'templateid' => $packet->templateId
         ];
         $json_encode = json_encode($data);
         if (strlen($body) != strlen(utf8_decode($body))) {

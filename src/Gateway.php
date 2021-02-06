@@ -21,20 +21,17 @@ use yii\swiftsmser\logging\LoggerInterface;
 
 class Gateway extends Component
 {
-    /** @var array Pass available transporters.*/
+    /** @var array Pass available transporters. */
     public $transporters = null;
 
-    /** @var string A sender id which will be used to send SMS*/
+    /** @var string A sender id which will be used to send SMS */
     public $senderId = null;
 
     /** @var bool If you want to enable logging success and failure of the SMSs. logging = ['connection' => 'db'] */
     public $logging = false;
 
-    /** @var int total characters unicode SMS character length to be used for SMS credit deduction calculation. */
-    public $unicodeSMSCharLength = 65;
-
-    /** @var int total characters for normal SMS character length to be used for SMD credit deduction calculation. */
-    public $normalCharLength = 165;
+    /** @var array Character length of unicode and normal sms to be deducted from SMS Credit. */
+    public $charLength = ['unicode' => 65, 'normal' => 165];
 
     /** @var string DLT headerId allocated from https://vilpower.in */
     public $headerId;
@@ -62,12 +59,16 @@ class Gateway extends Component
             throw new InvalidConfigException('Property "senderId" is mandatory for swiftsmser component.');
         }
 
-        if (!$this->unicodeSMSCharLength) {
-            throw new InvalidConfigException('Property "unicodeSMSCharLength" should be non zero integer.');
+        if (!$this->headerId) {
+            throw new InvalidConfigException('Property "headerId" is mandatory for swiftsmser component. Get from vilpower.in');
         }
 
-        if (!$this->normalCharLength) {
-            throw new InvalidConfigException('Property "normalCharLength" should be non zero integer.');
+        if (!$this->entityId) {
+            throw new InvalidConfigException('Property "entityId" is mandatory for swiftsmser component. Get from vilpower.in');
+        }
+
+        if (isset($this->charLength['normal']) && isset($this->charLength['unicode']) && !$this->charLength['unicode'] && !$this->charLength['normal']) {
+            throw new InvalidConfigException('Property "charLength" should be an array having non zero integers ["normal" => 65,"unicode"=>165].');
         }
 
         if ($this->logging && $this->_logger === null) {
@@ -133,29 +134,33 @@ class Gateway extends Component
      * @throws exceptions\SendException
      */
 
-    public function send(SMSPacket &$packet, array $to = []): ResponseInterface
+    public function send(SMSPacket &$packet): ResponseInterface
     {
-        $response = new Response();
-        $packet->setDeduction($this->calculateSMSDeduction($packet, $to));
+        $packet->headerId = $this->headerId;
+        $packet->entityId = $this->entityId;
+        if ($this->charLength) {
+            $packet->charLength = $this->charLength;
+        }
         try {
-            $response = $this->getTransporter()->send($packet, $to);
+            $response = $this->getTransporter()->send($packet);
             if ($this->_logger instanceof LoggerInterface && $response->getStatus() == Status::SUCCESS()) {
                 $this->_logger->setRecord([
                     'response_id' => $response->getResponseId(),
-                    'phone' => implode(',', $to),
+                    'phone' => implode(',', $packet->to),
                     'message' => $packet->getBody(),
                     'type' => $this->getTransporter()->type,
-                    'deduction' => $packet->getDeduction(),
+                    'deduction' => $packet->deduction,
                     'status' => $response->getStatus(),
                     'transporter' => get_class($this->getTransporter()),
                     'raw' => $response->getRaw()
                 ]);
             }
+            return $response;
         } catch (SendException $e) {
             if ($this->_logger instanceof LoggerInterface) {
                 $this->_logger->setRecord([
                     'response_id' => null,
-                    'phone' => implode(',', $to),
+                    'phone' => implode(',', $packet->to),
                     'message' => $packet->getBody(),
                     'type' => $this->getTransporter()->type,
                     'deduction' => 0,
@@ -164,8 +169,9 @@ class Gateway extends Component
                     'raw' => $e->getMessage()
                 ]);
             }
+            // forward the same exception
+            throw new SendException($e->getMessage());
         }
-        return $response;
     }
 
     /**
@@ -190,15 +196,6 @@ class Gateway extends Component
         }
 
         return false;
-    }
-
-    private function calculateSMSDeduction(SMSPacket &$packet, array $to): int
-    {
-        $char_length = $this->normalCharLength;
-        if (mb_detect_encoding($packet->getBody(), 'ASCII', true) != 'ASCII') {
-            $char_length = $this->unicodeSMSCharLength;
-        }
-        return ceil(mb_strlen($packet->getBody(), 'UTF-8') / $char_length) * count($to);
     }
 
     /**

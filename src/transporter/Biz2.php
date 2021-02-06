@@ -46,18 +46,18 @@ class Biz2 extends Base implements TransporterInterface
         throw new BalanceException('{"status":"FAILED","message": "Bad balance response","output": "' . $rawResponse . '"}');
     }
 
-    public function send(SMSPacket &$packet, array $to = []): ResponseInterface
+    public function send(SMSPacket &$packet): ResponseInterface
     {
-        return $this->sendWithNormalAPI($packet, $to);
+        return $this->sendWithNormalAPI($packet);
     }
 
-    private function sendWithTemplateApi(SMSPacket $packet, array $to = []): ResponseInterface
+    private function sendWithTemplateApi(SMSPacket $packet): ResponseInterface
     {
         $data = [
             'service' => 'T',
-            'template_id' => $packet->getTemplateId(),
-            'variables' => $packet->getVariables(),
-            'to' => implode(',', $to)
+            'template_id' => $packet->templateId,
+            'variables' => $packet->variables,
+            'to' => implode($this->_delimiter, $packet->to)
         ];
 
         $json_encode = json_encode($data);
@@ -80,22 +80,22 @@ class Biz2 extends Base implements TransporterInterface
         }
     }
 
-    private function sendWithNormalAPI(SMSPacket $smsObject, array $to = []): ResponseInterface
+    private function sendWithNormalAPI(SMSPacket $packet): ResponseInterface
     {
         $data = [
             'root' =>  [
                 'sender' => $this->_senderId,
                 'service' => 'T',
-                'entity_id' => $smsObject->getEntityId(),
-                'header_id' => $smsObject->getHeaderId(),
-                'template_id' => $smsObject->getTemplateId()
+                'entity_id' => $packet->entityId,
+                'header_id' => $packet->headerId,
+                'template_id' => $packet->templateId
             ],
             'nodes' => [
-                'to' => implode(',', $to),
-                'message' => $smsObject->getBody()
+                'to' => implode(',', $packet->to),
+                'message' => $packet->getBody()
             ]
         ];
-        if (strlen($smsObject->getBody()) != strlen(utf8_decode($smsObject->getBody()))) {
+        if (strlen($packet->getBody()) != strlen(utf8_decode($packet->getBody()))) {
             $data['type'] = 'U';
         } else {
             $data['type'] = 'N';
