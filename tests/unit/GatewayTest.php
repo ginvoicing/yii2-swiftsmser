@@ -131,7 +131,7 @@ class GatewayTest extends Codeception\Test\Unit
             'class' => \yii\swiftsmser\SMSPacket::class,
             'templateId' => '1107161061671432172',
             'body' => 'Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com',
-            'variables' => ["Hansika Jangra", "EST-213", "Rs. 45.21", "https://ginvcn.in/iud2", "universal Communication"],
+            'variables' => ["Hansika Jangra", "EST-213", "Rs. 45.21", "gnvc.in/iud2", "universal Communication"],
             'to' => ['9888300750']
         ]);
 
@@ -147,7 +147,7 @@ class GatewayTest extends Codeception\Test\Unit
             'class' => \yii\swiftsmser\SMSPacket::class,
             'templateId' => '1107161061671432172',
             'body' => 'Dear {#var#}, There is a new invoice: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com',
-            'variables' => ["Deepak kumar", "INV-0013", "Rs 344.3", "https://gnvcn.in/44asj3", "HelloCommunication"],
+            'variables' => ["Deepak kumar", "INV-0013", "Rs 344.3", "gnvc.in/a", "HelloCommunication"],
             'to' => ['9888300750']
         ]);
         $this->assertTrue($smsPacket->deduction > 0,"Deduction is {$smsPacket->deduction}");
@@ -164,7 +164,7 @@ class GatewayTest extends Codeception\Test\Unit
                  ->setTemplateId('34a7b0e7-58cd-40b5-a3d9-c901948ec33d')
                  ->setBody(
                      "Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
-                     ["Deepak Jangra","EST-004","Rs. 424.11","https://ginvcn.in/34324","Raj Communication"]
+                     ["Deepak Jangra","EST-004","Rs. 424.11","gnvc.in/34324","Raj Communication"]
                  )
                  ->setEntityId('1101147480000010561')
                  ->setHeaderId('1105158201172710267')
@@ -180,7 +180,7 @@ class GatewayTest extends Codeception\Test\Unit
             'class' => \yii\swiftsmser\SMSPacket::class,
             'templateId' => '1107161061675566196',
             'body' => 'Dear {#var#}, There is a new invoice: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com',
-            'variables' => ["Deepak kumar", "INV-0013", "Rs 344.3", "https://gnvcn.in/44asj3", "HelloCommunication"],
+            'variables' => ["Deepak kumar", "INV-0013", "Rs 344.3", "gnvc.in/a", "HelloCommunication"],
             'to' => ['9888300750']
         ]);
 
