@@ -48,7 +48,7 @@ class SMSPacket extends BaseObject
     public function getBody(): string
     {
         $body = $this->header . $this->body . $this->footer;
-        foreach ($this->variables as &$var) {
+        foreach ($this->variables as $var) {
             $body = preg_replace('/\{#var#\}/', $var, $body, 1);
         }
         return $body;
