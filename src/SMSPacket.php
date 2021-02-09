@@ -70,10 +70,11 @@ class SMSPacket extends BaseObject
 
     private function calculateDeduction(): int
     {
+        $totalCount = count($this->to)??1;
         $char_length = $this->charLength['normal'];
         if (mb_detect_encoding($this->getBody(), 'ASCII', true) != 'ASCII') {
             $char_length = $this->charLength['unicode'];
         }
-        return ceil(mb_strlen($this->getBody(), 'UTF-8') / $char_length) * count($this->to);
+        return ceil(mb_strlen($this->getBody(), 'UTF-8') / $char_length) * $totalCount;
     }
 }
