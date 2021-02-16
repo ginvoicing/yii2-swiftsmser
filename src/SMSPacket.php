@@ -59,7 +59,8 @@ class SMSPacket extends BaseObject
         foreach ($this->variables as $var) {
             $body = $this->replaceVars('{#var#}', $var, $body);
         }
-        return $body;
+
+        return str_replace('₹', 'Rs.', $body);
     }
 
     public function setHeader(string $header, array $vars = []): self
