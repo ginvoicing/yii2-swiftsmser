@@ -140,7 +140,7 @@ class GatewayTest extends Codeception\Test\Unit
         $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());
     }
 
-    public function testDeductionOfSMS()
+    public function testNonUnicodeDeductionOfSMS()
     {
         /** @var \yii\swiftsmser\SMSPacket $smsPacket */
         $smsPacket = \Yii::createObject([
@@ -150,7 +150,20 @@ class GatewayTest extends Codeception\Test\Unit
             'variables' => ["Deepak kumar", "INV-0013", "Rs 344.3", "gnvc.in/a", "HelloCommunication"],
             'to' => ['9888300750']
         ]);
-        $this->assertTrue($smsPacket->deduction > 0,"Deduction is {$smsPacket->deduction}");
+        $this->assertTrue($smsPacket->deduction===1,"Deduction is {$smsPacket->deduction}");
+    }
+
+    public function testUnicodeDeductionOfSMS()
+    {
+        /** @var \yii\swiftsmser\SMSPacket $smsPacket */
+        $smsPacket = \Yii::createObject([
+            'class' => \yii\swiftsmser\SMSPacket::class,
+            'templateId' => '1107161061671432172',
+            'body' => 'Dear {#var#}, There is a new invoice: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com',
+            'variables' => ["Deepak kumar", "INV-0013", "₹344.3", "gnvc.in/a", "HelloCommunication"],
+            'to' => ['9888300750']
+        ]);
+        $this->assertTrue($smsPacket->deduction===3,"Deduction is {$smsPacket->deduction}");
     }
 
     /**
