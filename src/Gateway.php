@@ -39,6 +39,9 @@ class Gateway extends Component
     /** @var string DLT entityId allocated from https://vilpower.in */
     public $entityId;
 
+    /** @var string Footer for all sms being sent from the gateway */
+    public $footer;
+
 
     /**
      * @var LoggerInterface|null
@@ -82,6 +85,7 @@ class Gateway extends Component
             }
             $this->_logger = \Yii::createObject($this->logging);
         }
+        $this->footer = "\ngnvc.in/a";
     }
 
     /**
@@ -138,6 +142,7 @@ class Gateway extends Component
     {
         $packet->headerId = $this->headerId;
         $packet->entityId = $this->entityId;
+        $packet->setFooter($this->footer);
         if ($this->charLength) {
             $packet->charLength = $this->charLength;
         }
