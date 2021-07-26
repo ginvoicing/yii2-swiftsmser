@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: tarunjangra
@@ -28,12 +29,12 @@ class Biz2 extends Base implements TransporterInterface
             ->reset()
             ->setHeaders(['Authorization' => "Bearer {$this->apiKey}"])
             ->post($this->_baseApi . 'account/balance');
-        if ($rawResponse==null) {
+        if ($rawResponse == null) {
             throw new BalanceException('{"status":"FAILED","message": "Connection problem with the gateway.","output": null}');
         }
         $decodedResponse = json_decode($rawResponse, true);
 
-        if ($decodedResponse['status'] === 200 && $decodedResponse['message'] === 'OK' && isset($decodedResponse['data'])) {
+        if ($decodedResponse['status'] === 'OK' && $decodedResponse['message'] === 'OK' && isset($decodedResponse['data'])) {
             foreach ($decodedResponse['data'] as $data) {
                 // This promotional gateway is sending message
                 // through Transactional channel.
@@ -108,7 +109,7 @@ class Biz2 extends Base implements TransporterInterface
             ->setHeaders(['Authorization' => "Bearer {$this->apiKey}"])
             ->post($this->_baseApi . 'sms/send/json?');
         $responseObject = new Response();
-        if ($rawResponse==null) {
+        if ($rawResponse == null) {
             throw new SendException('{"status":"FAILED","message": "Connection problem.","input":"' . $json_encode . '","output": null}');
         }
         $responseObject->setRaw($rawResponse);
