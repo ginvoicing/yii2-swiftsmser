@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: tarunjangra
@@ -150,7 +151,7 @@ class GatewayTest extends Codeception\Test\Unit
             'variables' => ["Deepak kumar", "INV-0013", "Rs 344.3", "gnvc.in/a", "HelloCommunication"],
             'to' => ['9888300750']
         ]);
-        $this->assertTrue($smsPacket->deduction===1,"Deduction is {$smsPacket->deduction}");
+        $this->assertTrue($smsPacket->deduction === 1, "Deduction is {$smsPacket->deduction}");
     }
 
     public function testUnicodeDeductionOfSMS()
@@ -160,31 +161,28 @@ class GatewayTest extends Codeception\Test\Unit
             'class' => \yii\swiftsmser\SMSPacket::class,
             'templateId' => '1107161061671432172',
             'body' => 'Dear {#var#}, There is a new invoice: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com',
-            'variables' => ["Deepak kumar", "INV-0013", "₹344.3", "gnvc.in/a", "HelloCommunication"],
+            'variables' => ["Deepak kumar", "INV-0013", "Rs 344.3", "gnvc.in/a", "हैलो कम्यूनिकेशन।"],
             'to' => ['9888300750']
         ]);
-        $this->assertTrue($smsPacket->deduction===3,"Deduction is {$smsPacket->deduction}");
+        $this->assertTrue($smsPacket->deduction === 3, "Deduction is {$smsPacket->deduction}");
     }
 
-    /**
-     * @skip
-     */
-    public function testSendTransactionalSMSWithTemplateAPI()
-    {
-        /** @var \yii\swiftsmser\ResponseInterface $response */
-        /*$response = Yii::$app->swiftsmser->transactional->send(
-             (new \yii\swiftsmser\SMSPacket())
-                 ->setTemplateId('34a7b0e7-58cd-40b5-a3d9-c901948ec33d')
-                 ->setBody(
-                     "Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
-                     ["Deepak Jangra","EST-004","Rs. 424.11","gnvc.in/34324","Raj Communication"]
-                 )
-                 ->setEntityId('1101147480000010561')
-                 ->setHeaderId('1105158201172710267')
-                 ->setDeduction(2)
-             , ['9888300750']);*/
 
-    }
+    // public function testSendTransactionalSMSWithTemplateAPI()
+    // {
+    //     /** @var \yii\swiftsmser\ResponseInterface $response */
+    //     $response = Yii::$app->swiftsmser->transactional->send(
+    //          (new \yii\swiftsmser\SMSPacket())
+    //              ->setTemplateId('34a7b0e7-58cd-40b5-a3d9-c901948ec33d')
+    //              ->setBody(
+    //                  "Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com",
+    //                  ["Deepak Jangra","EST-004","Rs. 424.11","gnvc.in/34324","Raj Communication"]
+    //              )
+    //              ->setEntityId('1101147480000010561')
+    //              ->setHeaderId('1105158201172710267')
+    //              ->setDeduction(2)
+    //          , ['9888300750']);
+    // }
 
     public function testSendPromotionalSMS()
     {
@@ -200,5 +198,16 @@ class GatewayTest extends Codeception\Test\Unit
         $response = Yii::$app->swiftsmser->promotional->send($smsPacket);
         /** @var \yii\swiftsmser\ResponseInterface $response */
         $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());
+    }
+
+    public function testBalanceOfGateways()
+    {
+        $balanceArray = Yii::$app->swiftsmser->gatewayBalance;
+        foreach ($balanceArray as $balanceObj) {
+            $this->assertTrue(isset($balanceObj['name']));
+            $this->assertTrue(isset($balanceObj['type']) && ($balanceObj['type'] == \yii\swiftsmser\enum\Type::TRANSACTIONAL() ||
+                $balanceObj['type'] == \yii\swiftsmser\enum\Type::PROMOTIONAL()));
+            $this->assertTrue($balanceObj['credit'] > 0);
+        }
     }
 }

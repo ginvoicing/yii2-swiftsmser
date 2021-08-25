@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: tarunjangra
@@ -239,5 +240,33 @@ class Gateway extends Component
             }
         }
         throw new BadGatewayException("SMS {$type} transporter is undefined.", 210419832);
+    }
+
+    /**
+     * Get balance of all sms gateways.
+     * @return array
+     * @throws InvalidConfigException
+     */
+    public function getGatewayBalance(): array
+    {
+        $balanceArray = [];
+        foreach ($this->transporters as $key => $gateway) {
+            $gateway_name = explode('\\', $gateway['class']);
+            $curlObject = new Curl();
+            // useragent for the gateway calls.
+            $curlObject->setOption(CURLOPT_USERAGENT, 'yii-swiftsmser');
+            $params = [
+                'class' => $gateway['class'],
+                'type' => $gateway['type']
+            ];
+            $params += $gateway['params'] ?? [];
+            $gatewayObject = \Yii::createObject($params, [$this->senderId, $curlObject]);
+            $balanceArray[] = [
+                'name' => end($gateway_name),
+                'credit' => $gatewayObject->getBalance(),
+                'type' => $gateway['type']
+            ];
+        }
+        return $balanceArray;
     }
 }
