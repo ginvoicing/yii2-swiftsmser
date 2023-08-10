@@ -34,7 +34,9 @@ class Biz2 extends Base implements TransporterInterface
         }
         $decodedResponse = json_decode($rawResponse, true);
 
-        if ($decodedResponse['status'] === 'OK' && $decodedResponse['message'] === 'OK' && isset($decodedResponse['data'])) {
+        if (isset($decodedResponse['status']) && $decodedResponse['status'] === 'OK' &&
+        isset($decodedResponse['message']) && $decodedResponse['message'] === 'OK' &&
+        isset($decodedResponse['data'])) {
             foreach ($decodedResponse['data'] as $data) {
                 // This promotional gateway is sending message
                 // through Transactional channel.
