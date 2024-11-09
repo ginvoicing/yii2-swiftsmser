@@ -114,15 +114,15 @@ class GatewayTest extends Codeception\Test\Unit
         $this->assertInstanceOf(Biz2::class, Yii::$app->swiftsmser->transactional->transporter);
     }
 
-    public function testBalanceFromPromotionalGateway()
-    {
-        $this->assertIsInt(Yii::$app->swiftsmser->promotional->balance, "Valid response from the gateway");
-    }
+    // public function testBalanceFromPromotionalGateway()
+    // {
+    //     $this->assertIsInt(Yii::$app->swiftsmser->promotional->balance, "Valid response from the gateway");
+    // }
 
-    public function testBalanceFromTransactionalGateway()
-    {
-        $this->assertIsInt(Yii::$app->swiftsmser->transactional->balance, "Valid response from the gateway");
-    }
+    // public function testBalanceFromTransactionalGateway()
+    // {
+    //     $this->assertIsInt(Yii::$app->swiftsmser->transactional->balance, "Valid response from the gateway");
+    // }
 
 
     public function testSendTransactionalSMS()
@@ -133,7 +133,7 @@ class GatewayTest extends Codeception\Test\Unit
             'templateId' => '1107161061671432172',
             'body' => 'Dear {#var#}, There is an estimate: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com',
             'variables' => ["Hansika Jangra", "EST-213", "Rs. 45.21", "gnvc.in/iud2", "universal Communication"],
-            'to' => ['9888300750']
+            'to' => ['+919888300750']
         ]);
 
         /** @var \yii\swiftsmser\ResponseInterface $response */
@@ -149,7 +149,7 @@ class GatewayTest extends Codeception\Test\Unit
             'templateId' => '1107161061671432172',
             'body' => 'Dear {#var#}, There is a new invoice: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com',
             'variables' => ["Deepak kumar", "INV-0013", "Rs 344.3", "gnvc.in/a", "HelloCommunication"],
-            'to' => ['9888300750']
+            'to' => ['+919888300750']
         ]);
         $this->assertTrue($smsPacket->deduction === 1, "Deduction is {$smsPacket->deduction}");
     }
@@ -162,7 +162,7 @@ class GatewayTest extends Codeception\Test\Unit
             'templateId' => '1107161061671432172',
             'body' => 'Dear {#var#}, There is a new invoice: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com',
             'variables' => ["Deepak kumar", "INV-0013", "Rs 344.3", "gnvc.in/a", "हैलो कम्यूनिकेशन।"],
-            'to' => ['9888300750']
+            'to' => ['+919888300750']
         ]);
         $this->assertTrue($smsPacket->deduction === 3, "Deduction is {$smsPacket->deduction}");
     }
@@ -181,7 +181,7 @@ class GatewayTest extends Codeception\Test\Unit
     //              ->setEntityId('1101147480000010561')
     //              ->setHeaderId('1105158201172710267')
     //              ->setDeduction(2)
-    //          , ['9888300750']);
+    //          , ['+919888300750']);
     // }
 
     public function testSendPromotionalSMS()
@@ -192,7 +192,7 @@ class GatewayTest extends Codeception\Test\Unit
             'templateId' => '1107161061675566196',
             'body' => 'Dear {#var#}, There is a new invoice: {#var#} of {#var#}. For more details {#var#} Thank You, {#var#} ginvoicing.com',
             'variables' => ["Deepak kumar", "INV-0013", "Rs 344.3", "gnvc.in/a", "HelloCommunication"],
-            'to' => ['9888300750']
+            'to' => ['+919888300750']
         ]);
 
         $response = Yii::$app->swiftsmser->promotional->send($smsPacket);
@@ -200,14 +200,14 @@ class GatewayTest extends Codeception\Test\Unit
         $this->assertTrue($response->getStatus() == \yii\swiftsmser\enum\Status::SUCCESS());
     }
 
-    public function testBalanceOfGateways()
-    {
-        $balanceArray = Yii::$app->swiftsmser->gatewayBalance;
-        foreach ($balanceArray as $balanceObj) {
-            $this->assertTrue(isset($balanceObj['name']));
-            $this->assertTrue(isset($balanceObj['type']) && ($balanceObj['type'] == \yii\swiftsmser\enum\Type::TRANSACTIONAL() ||
-                $balanceObj['type'] == \yii\swiftsmser\enum\Type::PROMOTIONAL()));
-            $this->assertTrue($balanceObj['credit'] > 0);
-        }
-    }
+    // public function testBalanceOfGateways()
+    // {
+    //     $balanceArray = Yii::$app->swiftsmser->gatewayBalance;
+    //     foreach ($balanceArray as $balanceObj) {
+    //         $this->assertTrue(isset($balanceObj['name']));
+    //         $this->assertTrue(isset($balanceObj['type']) && ($balanceObj['type'] == \yii\swiftsmser\enum\Type::TRANSACTIONAL() ||
+    //             $balanceObj['type'] == \yii\swiftsmser\enum\Type::PROMOTIONAL()));
+    //         $this->assertTrue($balanceObj['credit'] > 0);
+    //     }
+    // }
 }

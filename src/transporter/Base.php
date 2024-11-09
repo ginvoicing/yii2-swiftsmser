@@ -16,6 +16,8 @@ abstract class Base
     protected $_attributes;
     protected $_curl;
     protected $_senderId;
+
+    public string $type;
     protected $_delimiter = ',';
 
     public function __construct(string $sender_id, Curl $curl, $config = [])
