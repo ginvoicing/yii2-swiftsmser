@@ -25,8 +25,7 @@ class Biz2 extends Base implements TransporterInterface
 
     public function getBalance(): int
     {
-        $rawResponse = $this->_curl
-            ->reset()
+        $rawResponse = $this->resetCurl()
             ->setHeaders(['Authorization' => "Bearer {$this->apiKey}"])
             ->post($this->_baseApi . 'account/balance');
         if ($rawResponse == null) {
@@ -65,8 +64,7 @@ class Biz2 extends Base implements TransporterInterface
 
         $json_encode = json_encode($data);
 
-        $rawResponse = $this->_curl
-            ->reset()
+        $rawResponse = $this->resetCurl()
             ->setOption(CURLOPT_POSTFIELDS, $json_encode)
             ->setHeaders(['Content-Type' => 'application/json'])
             ->post($this->_baseApi . 'sms/template?access_token=' . $this->apiKey);
@@ -98,14 +96,13 @@ class Biz2 extends Base implements TransporterInterface
                 'message' => $packet->getBody()
             ]
         ];
-        if (strlen($packet->getBody()) != strlen(utf8_decode($packet->getBody()))) {
+        if ($packet->isUnicode()) {
             $data['type'] = 'U';
         } else {
             $data['type'] = 'N';
         }
         $json_encode = json_encode($data);
-        $rawResponse = $this->_curl
-            ->reset()
+        $rawResponse = $this->resetCurl()
             ->setOption(CURLOPT_POSTFIELDS, $json_encode)
             ->setHeaders(['Content-Type' => 'application/json'])
             ->setHeaders(['Authorization' => "Bearer {$this->apiKey}"])

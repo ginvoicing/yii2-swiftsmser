@@ -84,12 +84,19 @@ class SMSPacket extends BaseObject
      */
     public function getDeduction(): int
     {
-        $totalCount = count($this->to) ?? 1;
-        $char_length = $this->charLength['normal'];
-        if (mb_detect_encoding($this->getBody(), 'ASCII', true) != 'ASCII') {
-            $char_length = $this->charLength['unicode'];
-        }
-        return ceil(mb_strlen($this->getBody(), 'UTF-8') / $char_length) * $totalCount;
+        $totalCount = count($this->to);
+        $char_length = $this->isUnicode() ? $this->charLength['unicode'] : $this->charLength['normal'];
+        return (int)ceil(mb_strlen($this->getBody(), 'UTF-8') / $char_length) * $totalCount;
+    }
+
+    /**
+     * Whether the rendered body contains any non-ASCII character.
+     *
+     * @return bool
+     */
+    public function isUnicode(): bool
+    {
+        return !mb_check_encoding($this->getBody(), 'ASCII');
     }
 
     private function replaceVars($search_str, $replacement_str, $src_str)

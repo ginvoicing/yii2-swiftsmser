@@ -24,16 +24,15 @@ class ICloudMessage extends Base implements TransporterInterface
 
     public function getBalance(): int
     {
-        $rawResponse = $this->_curl
-            ->reset()
+        $rawResponse = $this->resetCurl()
             ->get($this->_baseApi . 'getClientRouteBalance?AUTH_KEY=' . $this->apiKey);
-        $decodedResponse = json_decode($rawResponse, true);
         if ($rawResponse == null) {
             throw new BalanceException('{"status":"FAILED","message": "Connection problem with the gateway.","output": null}');
         }
+        $decodedResponse = json_decode($rawResponse, true);
         // You will get responseCode parameter only if there
         // is some error in the response of the API.
-        if (count($decodedResponse) && !isset($decodedResponse['responseCode'])) {
+        if (is_array($decodedResponse) && count($decodedResponse) && !isset($decodedResponse['responseCode'])) {
             foreach ($decodedResponse as $key => $routes) {
                 //Which route you want use for sending sms enter routeId for particular route.use given Id for route.
                 // 1 = Transactional Route, 2 = Promotional Route,
@@ -62,13 +61,12 @@ class ICloudMessage extends Base implements TransporterInterface
             'templateid' => $packet->templateId
         ];
         $json_encode = json_encode($data);
-        if (strlen($body) != strlen(utf8_decode($body))) {
+        if ($packet->isUnicode()) {
             $data['smsContentType'] = 'Unicode';
         } else {
             $data['smsContentType'] = 'English';
         }
-        $rawResponse = $this->_curl
-            ->reset()
+        $rawResponse = $this->resetCurl()
             ->get($this->_baseApi . 'sendGroupSms?' . http_build_query($data));
 
         $responseObject = new Response();

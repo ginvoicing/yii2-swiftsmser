@@ -95,7 +95,7 @@ class Logger extends BaseObject implements LoggerInterface
      */
     public function updateRecordBySmsIdAndPhone($response_id, $phone, $data)
     {
-        if (!empty($sms_id)) {
+        if (!empty($response_id)) {
             $record = new $this->_model();
             $record = $record->findOne(['response_id' => $response_id, 'phone' => $phone]);
             if ($record) {
