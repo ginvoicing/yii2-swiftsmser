@@ -8,6 +8,8 @@
 
 namespace yii\swiftsmser\migrations;
 
+use yii\base\InvalidConfigException;
+
 class M321203203317SMSLogger extends \yii\db\Migration
 {
     public $tableName = '{{%swiftsmser_logger}}';
@@ -19,7 +21,7 @@ class M321203203317SMSLogger extends \yii\db\Migration
          */
         $logger = \Yii::$app->swiftsmser->getLogger();
         if ($logger === false) {
-            throw new Exception('Logger must be set');
+            throw new InvalidConfigException('Logger must be set');
         }
         $this->tableName = $logger->getTableName();
         $this->db = $logger->getConnection();
